@@ -1,0 +1,108 @@
+<html>
+
+<head>
+<title>Leak</title>
+</head>
+
+<body>
+
+<button id="doLeak">Leak</button>
+<button id="doNoLeak">Does Not Leak</button>
+<button id="doStop">Stop Leaking!</button>
+
+<div id="leak">
+</div>
+
+<script type="text/javascript">
+
+// App
+(function () {
+
+    var doLeak = document.getElementById('doLeak'),
+        doNoLeak = document.getElementById('doNoLeak'),
+        doStop = document.getElementById('doStop'),
+        stop = false,
+        timer = null;
+
+    doLeak.onclick = function () {
+
+        if (timer) clearTimeout(timer);
+
+        stop = false;
+
+        var leakTimeout = function () {
+            if (!stop) {
+                leak();
+            }
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(leakTimeout, 50);
+        }
+
+        leakTimeout();
+    };
+
+    doNoLeak.onclick = function () {
+
+        if (timer) clearTimeout(timer);
+
+        stop = false;
+
+        var leakTimeout = function () {
+            if (!stop) {
+                noLeak();
+            }
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(leakTimeout, 50);
+        }
+
+        leakTimeout();
+    };
+
+    doStop.onclick = function () {
+        stop = true;
+        if (timer) clearTimeout(timer);
+    };
+
+    function leak () {
+
+        var div = document.getElementById('leak'),
+            count = 1000;
+
+        // Empty previous elements, leaks
+        while (div.lastChild) {
+            div.removeChild(div.lastChild);
+        }
+
+        for (var i = 0; i < count; i++) {
+            var d = document.createElement('div');
+
+            d.style.height = '115px';
+
+            div.appendChild(d);
+        }
+    }
+
+    function noLeak () {
+
+        var div = document.getElementById('leak'),
+            count = 1000;
+
+        // Empty previous elements, does not leak
+        while (div.lastChild) {
+            div.removeChild(div.lastChild);
+        }
+
+        for (var i = 0; i < count; i++) {
+            var d = document.createElement('div');
+
+            div.appendChild(d);
+        }
+    }
+
+})();
+
+</script>
+
+</body>
+
+</html>
